@@ -7,6 +7,7 @@ export interface IAStarFinderConstructor {
   weight?: number;
   includeStartNode?: boolean;
   includeEndNode?: boolean;
+  costAwareness?: boolean;
 }
 
 export interface IGridConstructor {
@@ -14,12 +15,14 @@ export interface IGridConstructor {
   height?: number;
   matrix?: number[][];
   densityOfObstacles?: number;
+  costAwareness?: boolean;
 }
 
 export interface INodeConstructor {
   id: number;
   position: IPoint;
   walkable?: boolean;
+  cost?: number;
 }
 
 export interface IPoint {

@@ -12,7 +12,7 @@ import { Heuristic } from '../types/astar.types';
 
 export class AStarFinder {
   // Grid
-  private grid: Grid;
+  private readonly grid: Grid;
 
   // Lists
   private closedList: Node[];
@@ -31,7 +31,8 @@ export class AStarFinder {
       width: aParams.grid.width,
       height: aParams.grid.height,
       matrix: aParams.grid.matrix || undefined,
-      densityOfObstacles: aParams.grid.densityOfObstacles || 0
+      densityOfObstacles: aParams.grid.densityOfObstacles || 0,
+      costAwareness: aParams.costAwareness || false
     });
 
     // Init lists
@@ -136,36 +137,37 @@ export class AStarFinder {
 
       // Loop through all the neighbors
       for (let i in neighbors) {
-        const neightbor = neighbors[i];
+        const neighbor = neighbors[i];
 
         // Continue if node on closed list
-        if (neightbor.getIsOnClosedList()) {
+        if (neighbor.getIsOnClosedList()) {
           continue;
         }
 
-        // Calculate the g value of the neightbor
+        // Calculate the g value of the neighbor
         const nextGValue =
           currentNode.getGValue() +
-          (neightbor.position.x !== currentNode.position.x ||
-          neightbor.position.y! == currentNode.position.y
+          neighbor.getCost() +
+          (neighbor.position.x !== currentNode.position.x ||
+          neighbor.position.y! == currentNode.position.y
             ? this.weight
             : this.weight * 1.41421);
 
         // Is the neighbor not on open list OR
         // can it be reached with lower g value from current position
         if (
-          !neightbor.getIsOnOpenList() ||
-          nextGValue < neightbor.getGValue()
+          !neighbor.getIsOnOpenList() ||
+          nextGValue < neighbor.getGValue()
         ) {
-          neightbor.setGValue(nextGValue);
-          neightbor.setParent(currentNode);
+          neighbor.setGValue(nextGValue);
+          neighbor.setParent(currentNode);
 
-          if (!neightbor.getIsOnOpenList()) {
-            neightbor.setIsOnOpenList(true);
-            this.openList.push(neightbor);
+          if (!neighbor.getIsOnOpenList()) {
+            neighbor.setIsOnOpenList(true);
+            this.openList.push(neighbor);
           } else {
             // okay this is a better way, so change the parent
-            neightbor.setParent(currentNode);
+            neighbor.setParent(currentNode);
           }
         }
       }

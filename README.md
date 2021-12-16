@@ -150,7 +150,7 @@ this.aStarInstance = new AStarFinder({
     width: 8,
     height: 8
   },
-  heuristicFunction: "Manhattan"
+  heuristic: "Manhattan"
 });
 ```
 
@@ -181,6 +181,29 @@ this.aStarInstance = new AStarFinder({
   },
   includeStartNode: true,
   includeEndNode: true
+});
+```
+
+Enable cost awareness for `each node`.
+Higher the cost / weight the lease desirable it is to traverse it:
+
+``` ts
+let myMatrix = [
+  [0, 1, 0, 2, 1, 0, 2, 1],
+  [0, 2, 0, 0, 2, 3, 0, 1],
+  [2, 3, 3, 1, 1, 1, 1, 3],
+  [0, 2, 3, 0, 1, 2, 1, 1],
+  [2, 3, 2, 4, 2, 0, 1, 2],
+  [1, 1, 3, 2, 1, 0, 1, 2],
+  [0, 2, 0, 0, 2, 2, 3, 0],
+  [0, 1, 1, 2, 2, 1, 0, 2]
+];
+
+this.aStarInstance = new AStarFinder({
+  grid: {
+    matrix: myMatrix
+  },
+  costAwareness: true
 });
 ```
 

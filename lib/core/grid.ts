@@ -6,6 +6,7 @@ export class Grid {
   readonly width: number;
   readonly height: number;
   readonly numberOfFields: number;
+  readonly costAwareness: boolean;
 
   // The node grid
   private gridNodes: Node[][];
@@ -21,6 +22,9 @@ export class Grid {
       this.height = aParams.matrix.length;
       this.numberOfFields = this.width * this.height;
     }
+
+    // Define if cost awareness is turned on
+    this.costAwareness = aParams.costAwareness;
 
     // Create and generate the matrix
     this.gridNodes = this.buildGridWithNodes(
@@ -85,10 +89,15 @@ export class Grid {
      */
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        if (matrix[y][x]) {
-          newGrid[y][x].setIsWalkable(false);
-        } else {
+        if (this.costAwareness) {
+          newGrid[y][x].setCost(matrix[y][x]);
           newGrid[y][x].setIsWalkable(true);
+        } else {
+          if (matrix[y][x]) {
+            newGrid[y][x].setIsWalkable(false);
+          } else {
+            newGrid[y][x].setIsWalkable(true);
+          }
         }
       }
     }
@@ -127,21 +136,20 @@ export class Grid {
 
   /**
    * Get surrounding nodes.
-   * @param currentXPos [x-position on the grid]
-   * @param currentYPos [y-position on the grid]
-   * @param diagnonalMovementAllowed [is diagnonal movement allowed?]
+   * @param currentPosition
+   * @param diagonalMovementAllowed [are diagonal movements allowed?]
    */
   public getSurroundingNodes(
     currentPosition: IPoint,
-    diagnonalMovementAllowed: boolean
+    diagonalMovementAllowed: boolean
   ): Node[] {
     const surroundingNodes: Node[] = [];
 
-    for (var y = currentPosition.y - 1; y <= currentPosition.y + 1; y++) {
-      for (var x = currentPosition.x - 1; x <= currentPosition.x + 1; x++) {
+    for (let y = currentPosition.y - 1; y <= currentPosition.y + 1; y++) {
+      for (let x = currentPosition.x - 1; x <= currentPosition.x + 1; x++) {
         if (this.isOnTheGrid({ x, y })) {
           if (this.isWalkableAt({ x, y })) {
-            if (diagnonalMovementAllowed) {
+            if (diagonalMovementAllowed) {
               surroundingNodes.push(this.getNodeAt({ x, y }));
             } else {
               if (x == currentPosition.x || y == currentPosition.y) {
